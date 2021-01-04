@@ -1,3 +1,4 @@
+from discord import guild
 from dotenv import load_dotenv
 
 DEBUG = True
@@ -5,7 +6,7 @@ if DEBUG:
     load_dotenv()
 
 from typing import List
-from message_collector import get_user_messages
+from message_collector import download_server
 
 from db_manager import task_db
 from db_manager import channel_db
@@ -148,8 +149,10 @@ async def copypastas(ctx) -> None:
 #     else:
 #         await ctx.send('Please provide a reason with the command')
 
+
+
 @bot.command()
-async def getUserMessages(ctx) -> None:
+async def downloadServer(ctx) -> None:
     def check(message: discord.Message) -> bool:
         if ctx.author != message.author:
             return False
@@ -160,20 +163,14 @@ async def getUserMessages(ctx) -> None:
     await ctx.send('What is the id of the server you want to scrape data from?')
     guild_id = int((await bot.wait_for('message', check=check)).content)
 
-    await ctx.send('Whose messages do you want to read?(Separate names by comma)')
-    member_names: List[str] = str((await bot.wait_for('message', check=check)).content).split(',')
+    await ctx.send('What channel ids would you like to blacklist? NA for none (separate by comma)')
+    blacklist_string = str((await bot.wait_for('message', check=check)).content).replace('\n', '').strip()
 
-    await ctx.send('Which channels would you like to blacklist from getting messages?(NA for None, separate by comma)')
-    blacklisted_channel_string: str = str((await bot.wait_for('message', check=check)).content).replace('\n', '').strip()
-
-    if blacklisted_channel_string != 'NA':
-        blacklisted_channel_ids = [int(item) for item in blacklisted_channel_string.split(',')]
-
-    for i in range(0, len(member_names)):
-        member_names[i] = member_names[i].strip()
+    if blacklist_string.lower() != 'na':
+        blacklisted_channel_ids = [int(item) for item in blacklist_string.split(',')]
 
     await ctx.send('Starting process...')
-    await get_user_messages(bot.get_guild(int(guild_id)), member_names, blacklisted_channel_ids=blacklisted_channel_ids)
+    await download_server(bot.get_guild(guild_id), blacklisted_channel_ids=blacklisted_channel_ids)
     await ctx.send(f'{ctx.author.mention} Done collecting data ;)')
 
 
