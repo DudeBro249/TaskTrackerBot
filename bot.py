@@ -1,3 +1,4 @@
+from inspect import isfunction
 from discord import guild
 from dotenv import load_dotenv
 
@@ -191,7 +192,20 @@ async def setStatus(ctx, new_status: str) -> None:
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
-
+    bot_guilds: List[discord.Guild] = bot.guilds
+    for guild in bot_guilds:
+        for channel in guild.channels:
+            if isinstance(channel, discord.VoiceChannel):
+                if len(channel.members) > 0:
+                    role = get_role_by_attribute('name', channel.name, roles=guild.roles)
+                    if role == None:
+                        role = await guild.create_role(name=channel.name)
+                
+                    for member in channel.members:
+                        assert isinstance(member, discord.Member)
+                        if role not in member.roles:
+                            await member.add_roles(role)
+                    
 
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
