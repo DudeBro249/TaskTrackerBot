@@ -1,5 +1,3 @@
-from inspect import isfunction
-from discord import guild
 from dotenv import load_dotenv
 
 DEBUG = True
