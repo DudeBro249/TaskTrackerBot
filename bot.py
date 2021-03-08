@@ -187,6 +187,24 @@ async def setStatus(ctx, new_status: str) -> None:
     return
 
 
+@bot.command()
+async def createTables(ctx):
+    def check(message: discord.Message) -> bool:
+        if ctx.author != message.author:
+            return False
+        return True
+
+    admin_password: str = os.getenv('ADMIN_PASSWORD')
+    await ctx.send('Enter the admin password: ')
+    password: str = (await bot.wait_for('message', check = check)).content
+    if password == admin_password:
+        await ctx.send('Authorized!')
+        await copypasta_db.create_copypastas_table()
+        await task_db.create_tasks_table()
+        await channel_db.create_channels_table()
+        await ctx.send('Done')
+
+
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}')
