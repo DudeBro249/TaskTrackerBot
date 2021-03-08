@@ -28,3 +28,4 @@ def build_query(table: Table, filters: Dict[str, Dict[str, Any]]=None) -> list:
     if values == {}:
         values = None
     return str(query), dict(values)
+    

@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-DEBUG = True
+DEBUG = False
 if DEBUG:
     load_dotenv()
 

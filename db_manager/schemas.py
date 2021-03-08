@@ -30,5 +30,3 @@ copypastas = sqlalchemy.Table(
     sqlalchemy.Column("content", sqlalchemy.String, nullable=False),
     sqlalchemy.Column("guild_id", sqlalchemy.String(length=50), nullable=False)
 )
-
-

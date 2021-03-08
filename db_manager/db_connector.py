@@ -1,5 +1,5 @@
 import os
 from databases import Database
 
-DATABASE_URI = str(os.getenv('DATABASE_URI'))
-db = Database(DATABASE_URI)
+DATABASE_URL = str(os.getenv('DATABASE_URL'))
+db = Database(DATABASE_URL)
