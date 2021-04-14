@@ -1,4 +1,9 @@
-class TaskOut:
+import orm
+from db_manager.db import db, metadata
+from pydantic import BaseModel
+
+
+class TaskOut(BaseModel):
     task_id: int
     title: str
     content: str
@@ -7,30 +12,7 @@ class TaskOut:
     guild_id: str
     role_id: str
 
-    def __init__(self, task_id: int, title: str, content: str, deadline: str, date_assigned: str, guild_id: str, role_id: str) -> None:
-        self.task_id = task_id
-        self.title = title
-        self.content = content
-        self.deadline = deadline
-        self.date_assigned = date_assigned
-        self.guild_id = guild_id
-        self.role_id = role_id
-    
-    def get_attribute(self, attribute: str):
-        return getattr(self, attribute)
-    
-    def to_dict(self) -> dict:
-        return {
-            "task_id": int(self.task_id),
-            "title": str(self.title),
-            "content": str(self.content),
-            "deadline": str(self.deadline),
-            "date_assigned": str(self.date_assigned),
-            "guild_id": str(self.guild_id),
-            "role_id": str(self.role_id)
-        }
-
-class TaskIn:
+class TaskIn(BaseModel):
     title: str
     content: str
     deadline: str
@@ -38,23 +20,15 @@ class TaskIn:
     guild_id: str
     role_id: str
 
-    def __init__(self, title: str, content: str, deadline: str, date_assigned: str, guild_id: str, role_id: str) -> None:
-        self.title = title
-        self.content = content
-        self.deadline = deadline
-        self.date_assigned = date_assigned
-        self.guild_id = guild_id
-        self.role_id = role_id
-    
-    def get_attribute(self, attribute: str):
-        return getattr(self, attribute)
-    
-    def to_dict(self) -> dict:
-        return {
-            "title": str(self.title),
-            "content": str(self.content),
-            "deadline": str(self.deadline),
-            "date_assigned": str(self.date_assigned),
-            "guild_id": str(self.guild_id),
-            "role_id": str(self.role_id)
-        }
+class TaskTable(orm.Model):
+    __tablename__ = "tasks"
+    __database__ = db
+    __metadata__ = metadata
+
+    task_id = orm.Integer(primary_key=True)
+    title = orm.String(max_length=40)
+    content = orm.String(max_length=500)
+    deadline = orm.String(max_length=20)
+    date_assigned = orm.String(max_length=20)
+    guild_id = orm.String(max_length=30)
+    role_id = orm.String(max_length=30)
