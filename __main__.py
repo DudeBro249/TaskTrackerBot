@@ -1,10 +1,7 @@
-from constants.environment import DISCORD_TOKEN
 from bot import TaskTrackerBot
-from dotenv import load_dotenv
+from constants.environment import DISCORD_TOKEN
+from db_manager.db import create_all_tables
 
-DEBUG = True
-if DEBUG:
-    load_dotenv()
 
 def main():
     bot = TaskTrackerBot.new()
@@ -18,6 +15,7 @@ def main():
 
     for extension_name in extension_names:
         bot.load_extension(extension_name)
+    create_all_tables()
     bot.run(DISCORD_TOKEN)
 
 if __name__ == '__main__':

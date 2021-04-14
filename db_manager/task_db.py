@@ -27,7 +27,7 @@ async def get_guild_tasks(guild: discord.Guild, role: discord.Role=None) -> List
 async def insert_one_task(task_input: TaskIn) -> TaskOut:
     inserted_task = await TaskTable.objects.create(**task_input.dict())
     return TaskOut(
-        task_id=inserted_task.id,
+        task_id=inserted_task.task_id,
         title=inserted_task.title,
         content=inserted_task.content,
         deadline=inserted_task.deadline,

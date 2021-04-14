@@ -10,7 +10,7 @@ class TaskOut(BaseModel):
     deadline: str
     date_assigned: str
     guild_id: str
-    role_id: str
+    role_id: str = ''
 
 class TaskIn(BaseModel):
     title: str
@@ -31,4 +31,4 @@ class TaskTable(orm.Model):
     deadline = orm.String(max_length=20)
     date_assigned = orm.String(max_length=20)
     guild_id = orm.String(max_length=30)
-    role_id = orm.String(max_length=30)
+    role_id = orm.String(max_length=30, allow_blank=True)

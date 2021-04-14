@@ -8,7 +8,6 @@ from discord.ext import commands
 class TaskTrackerBot(commands.Bot):
 
     async def on_ready(self):
-        print(f'Logged in as {self.user}')
         bot_guilds: List[discord.Guild] = self.guilds
         for guild in bot_guilds:
             for channel in guild.channels:
@@ -22,6 +21,7 @@ class TaskTrackerBot(commands.Bot):
                             assert isinstance(member, discord.Member)
                             if role not in member.roles:
                                 await member.add_roles(role)
+        print(f'Logged in as {self.user}')
 
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
         await manage_voice_channel_roles(member, before, after)

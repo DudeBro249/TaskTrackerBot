@@ -42,15 +42,15 @@ class Tasks(commands.Cog):
         deadline: str = str(deadline_message.content)
 
         return TaskIn(
-            title=str(title),
-            content=str(task_content),
-            deadline=str(deadline),
-            date_assigned=date.today().strftime('%d/%m/%Y'),
-            guild_id=str(ctx.guild.id),
-            role_id=''
+            title = str(title),
+            content = str(task_content),
+            deadline = str(deadline),
+            date_assigned = date.today().strftime('%d/%m/%Y'),
+            guild_id = str(ctx.guild.id),
+            role_id = ''
         )
     
-    def create_task_embed(task: Union[TaskIn, TaskOut]) -> discord.Embed:
+    def create_task_embed(self, task: Union[TaskIn, TaskOut]) -> discord.Embed:
         task_embed = discord.Embed(
             type="rich",
             title=task.title
