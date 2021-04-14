@@ -41,7 +41,7 @@ class CopyPastas(commands.Cog):
         await ctx.send('Done!')
     
     @commands.command()
-    async def copypasta(ctx: commands.Context, *, copypasta_name: str) -> None:
+    async def copypasta(self, ctx: commands.Context, *, copypasta_name: str) -> None:
         copypasta_output = await copypasta_db.get_copypasta_by_name_and_guild(copypasta_name, ctx.guild)
         if copypasta_output:
             await ctx.send(f'From {ctx.author.mention}:\n{copypasta_output.content}')
@@ -49,7 +49,7 @@ class CopyPastas(commands.Cog):
             await ctx.send('Copypasta not found!')
     
     @commands.command()
-    async def copypastas(ctx: commands.Context) -> None:
+    async def copypastas(self, ctx: commands.Context) -> None:
         copypasta_outputs = await copypasta_db.get_copypastas_by_guild(ctx.guild)
         copypastas_embed = discord.Embed(
             type='rich',

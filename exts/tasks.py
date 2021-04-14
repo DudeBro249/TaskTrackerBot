@@ -1,9 +1,9 @@
 from datetime import date
-import os
 from typing import List, Union
 
 import discord
 from bot import TaskTrackerBot
+from constants.environment import SECRET_GUILD_ID
 from db_manager import task_db
 from discord.ext import commands
 from models.task import TaskIn, TaskOut
@@ -78,9 +78,7 @@ class Tasks(commands.Cog):
         return False
     
     async def post_to_secret_server(self, ctx: commands.Context, input_task: TaskIn) -> None:
-        secret_guild_id = str(os.getenv('SECRET_GUILD_ID'))
-
-        if secret_guild_id == str(ctx.guild.id):
+        if SECRET_GUILD_ID == str(ctx.guild.id):
             for channel in ctx.guild.channels:
                 if isinstance(channel, discord.TextChannel):
                     if channel.name == str(input_task.title).lower():

@@ -23,7 +23,7 @@ class TaskTrackerBot(commands.Bot):
                             if role not in member.roles:
                                 await member.add_roles(role)
 
-    async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
         await manage_voice_channel_roles(member, before, after)
         if before.channel and after.channel and before.channel == after.channel and after.self_stream:
             designated_channel = await channel_db.get_bot_channel_by_guild(before.channel.guild)

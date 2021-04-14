@@ -76,7 +76,7 @@ class Fun(commands.Cog):
 
 
     @commands.command()
-    async def pingVC(ctx: commands.Context):
+    async def pingVC(self, ctx: commands.Context):
         vc_role = get_role_by_attribute('name', ctx.author.voice.channel.name, ctx.guild.roles)
         await ctx.send(vc_role.mention)
     
