@@ -32,12 +32,3 @@ def sort_dict_by_value(dictionary: dict) -> dict:
             if dictionary.get(key) == sorted_values[i]:
                 sorted_dict[key] = sorted_values[i]
     return sorted_dict
-
-
-    
-    
-
-
-
-
-
