@@ -1,7 +1,9 @@
-from discord.ext.commands.core import command
+from discord_slash import cog_ext
+from discord_slash.context import SlashContext
 from utilities.bot_utilities import get_role_by_attribute
 from message_collector import download_server
 from utilities.general_utilities import remove_all, sort_dict_by_value
+from discord_slash import cog_ext
 
 import discord
 from bot import TaskTrackerBot
@@ -13,8 +15,8 @@ class Fun(commands.Cog):
     def __init__(self, bot: TaskTrackerBot) -> None:
         self.bot = bot
     
-    @commands.command()
-    async def countMessage(self, ctx, *, message_string: str=None) -> None:
+    @cog_ext.cog_slash(name='countMessage', description='Counts all the messages in a certain channel')
+    async def count_messages(self, ctx: SlashContext, *, message_string: str=None) -> None:
         def check(message: discord.Message) -> bool:
             if ctx.author != message.author:
                 return False
@@ -52,8 +54,8 @@ class Fun(commands.Cog):
         
         await ctx.send(embed=message_count_embed)
     
-    @commands.command()
-    async def downloadServer(self, ctx: commands.Context) -> None:
+    @cog_ext.cog_slash(name='downloadServer', description='')
+    async def downloadServer(self, ctx: SlashContext) -> None:
         def check(message: discord.Message) -> bool:
             if ctx.author != message.author:
                 return False
@@ -75,17 +77,19 @@ class Fun(commands.Cog):
         await ctx.send(f'{ctx.author.mention} Done collecting data ;)')
 
 
-    @commands.command()
-    async def pingVC(self, ctx: commands.Context):
+    @cog_ext.cog_slash(name='pingVC', description='Pings the role of the voice channel you are in')
+    async def ping_vc(self, ctx: SlashContext):
+        if not ctx.author.voice.channel:
+            await ctx.send('You are not in a voice channel right now :(')
+            return
         vc_role = get_role_by_attribute('name', ctx.author.voice.channel.name, ctx.guild.roles)
         await ctx.send(vc_role.mention)
     
-    @commands.command(pass_context=False)
-    async def setStatus(self, new_status: str) -> None:
+    @cog_ext.cog_slash(name='setStatus', description='Sets the status of the bot')
+    async def setStatus(self, context: SlashContext, new_status: str) -> None:
         possible_statuses = ['dnd', 'online', 'idle']
         if new_status in possible_statuses:
             await self.bot.change_presence(status=new_status)
-        return
 
 def setup(bot: TaskTrackerBot):
     bot.add_cog(Fun(bot))

@@ -1,14 +1,16 @@
 import discord
-from discord.ext import commands
 from bot import TaskTrackerBot
+from discord.ext import commands
+from discord_slash import cog_ext
+from discord_slash.context import SlashContext
 
 class Moderation(commands.Cog):
     bot: TaskTrackerBot
     def __init__(self, bot: TaskTrackerBot) -> None:
         self.bot = bot
     
-    @commands.command()
-    async def purgeRole(ctx: commands.Context, *, role: discord.Role=None) -> None:
+    @cog_ext.cog_slash(name='purgeRole', description='Counts all the messages in a certain channel')
+    async def purge_role(ctx: SlashContext, *, role: discord.Role=None) -> None:
         for member in ctx.guild.members:
             try:
                 if role in member.roles:

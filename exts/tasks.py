@@ -7,6 +7,8 @@ from constants.environment import SECRET_GUILD_ID
 from db_manager import task_db
 from discord.ext import commands
 from models.task import TaskIn, TaskOut
+from discord_slash import cog_ext
+from discord_slash.context import SlashContext
 
 
 class Tasks(commands.Cog):
@@ -14,7 +16,7 @@ class Tasks(commands.Cog):
     def __init__(self, bot: TaskTrackerBot) -> None:
         self.bot = bot
     
-    async def get_task_from_user(self, ctx) -> TaskIn:
+    async def get_task_from_user(self, ctx: SlashContext) -> TaskIn:
         def check(message: discord.Message) -> bool:
             if ctx.author != message.author:
                 return False
@@ -67,7 +69,7 @@ class Tasks(commands.Cog):
 
         return task_embed
     
-    async def displayTasks(self, ctx: commands.Context, tasks: List[TaskOut]) -> bool:
+    async def displayTasks(self, ctx: SlashContext, tasks: List[TaskOut]) -> bool:
         if len(tasks) == 0:
             await ctx.send('No tasks. Woohoo!')
             return True
@@ -77,7 +79,7 @@ class Tasks(commands.Cog):
             await ctx.send(embed=task_embed)
         return False
     
-    async def post_to_secret_server(self, ctx: commands.Context, input_task: TaskIn) -> None:
+    async def post_to_secret_server(self, ctx: SlashContext, input_task: TaskIn) -> None:
         if SECRET_GUILD_ID == str(ctx.guild.id):
             for channel in ctx.guild.channels:
                 if isinstance(channel, discord.TextChannel):
@@ -85,7 +87,7 @@ class Tasks(commands.Cog):
                         await channel.send(f'{ctx.author.mention}')
                         await channel.send(embed=self.create_task_embed(input_task))
     
-    async def get_and_add_task(self, ctx: commands.Context, role: discord.Role=None) -> None:
+    async def get_and_add_task(self, ctx: SlashContext, role: discord.Role=None) -> None:
         input_task = await self.get_task_from_user(ctx)
         await self.post_to_secret_server(ctx, input_task=input_task)
 
@@ -95,19 +97,19 @@ class Tasks(commands.Cog):
         await task_db.insert_one_task(input_task)
         await ctx.send('Added task to database!')
     
-    @commands.command()
-    async def addTask(self, ctx: commands.Context, *, role: discord.Role=None) -> None:
+    @cog_ext.cog_slash(name='addTask', description="Adds a task to this server's list of tasks")
+    async def add_task(self, ctx: SlashContext, *, role: discord.Role=None) -> None:
         await self.get_and_add_task(ctx, role=role)
 
-    @commands.command()
-    async def getTasks(self, ctx: commands.Context, *, role: discord.Role=None) -> None:
+    @cog_ext.cog_slash(name='getTasks', description="Sends the list of tasks that belong to this server")
+    async def get_tasks(self, ctx: SlashContext, *, role: discord.Role=None) -> None:
         mapped_tasks = await task_db.get_guild_tasks(ctx.guild, role=role)
         await self.displayTasks(
             ctx=ctx,
             tasks=mapped_tasks
         )
-    @commands.command()
-    async def markComplete(self, ctx, *, role: discord.Role=None) -> None:
+    @cog_ext.cog_slash(name='markComplete', description="Marks a task as complete")
+    async def mark_complete(self, ctx: SlashContext, *, role: discord.Role=None) -> None:
         def check(message: discord.Message) -> bool:
             if message.author != ctx.author:
                 return False
