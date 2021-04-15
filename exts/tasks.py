@@ -121,8 +121,8 @@ class Tasks(commands.Cog):
             return True
         
         tasks = await task_db.get_guild_tasks(ctx.guild, role=role)
-        await self.displayTasks(ctx, tasks)
-        if len(tasks) == 0:
+        no_tasks = await self.displayTasks(ctx, tasks)
+        if no_tasks:
             return
 
         await ctx.send('Please enter the id of the task you would like to mark as complete')

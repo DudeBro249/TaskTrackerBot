@@ -9,7 +9,7 @@ class Moderation(commands.Cog):
     def __init__(self, bot: TaskTrackerBot) -> None:
         self.bot = bot
     
-    @cog_ext.cog_slash(name='purgeRole', description='Counts all the messages in a certain channel')
+    @cog_ext.cog_slash(name='purgeRole', description='Removes this role from every member in the server')
     async def purge_role(ctx: SlashContext, *, role: discord.Role=None) -> None:
         for member in ctx.guild.members:
             try:

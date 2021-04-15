@@ -1,3 +1,4 @@
+import asyncio
 from discord_slash import cog_ext
 from discord_slash.context import SlashContext
 from utilities.bot_utilities import get_role_by_attribute
@@ -54,27 +55,29 @@ class Fun(commands.Cog):
         
         await ctx.send(embed=message_count_embed)
     
-    @cog_ext.cog_slash(name='downloadServer', description='')
-    async def downloadServer(self, ctx: SlashContext) -> None:
-        def check(message: discord.Message) -> bool:
-            if ctx.author != message.author:
-                return False
-            return True
+    # @cog_ext.cog_slash(name='downloadServer', description='Run to find out...')
+    # async def downloadServer(self, ctx: SlashContext) -> None:
+    #     await ctx.send('lol you ***THOUGHT***')
+    #     return
+    #     # def check(message: discord.Message) -> bool:
+    #     #     if ctx.author != message.author:
+    #     #         return False
+    #     #     return True
         
-        blacklisted_channel_ids = None
+    #     # blacklisted_channel_ids = None
 
-        await ctx.send('What is the id of the server you want to scrape data from?')
-        guild_id = int((await self.bot.wait_for('message', check=check)).content)
+    #     # await ctx.send('What is the id of the server you want to scrape data from?')
+    #     # guild_id = int((await self.bot.wait_for('message', check=check)).content)
 
-        await ctx.send('What channel ids would you like to blacklist? NA for none (separate by comma)')
-        blacklist_string = str((await self.bot.wait_for('message', check=check)).content).replace('\n', '').strip()
+    #     # await ctx.send('What channel ids would you like to blacklist? NA for none (separate by comma)')
+    #     # blacklist_string = str((await self.bot.wait_for('message', check=check)).content).replace('\n', '').strip()
 
-        if blacklist_string.lower() != 'na':
-            blacklisted_channel_ids = [int(item) for item in blacklist_string.split(',')]
+    #     # if blacklist_string.lower() != 'na':
+    #     #     blacklisted_channel_ids = [int(item) for item in blacklist_string.split(',')]
 
-        await ctx.send('Starting process...')
-        await download_server(self.bot.get_guild(guild_id), blacklisted_channel_ids=blacklisted_channel_ids)
-        await ctx.send(f'{ctx.author.mention} Done collecting data ;)')
+    #     # await ctx.send('Starting process...')
+    #     # await download_server(self.bot.get_guild(guild_id), blacklisted_channel_ids=blacklisted_channel_ids)
+    #     # await ctx.send(f'{ctx.author.mention} Done collecting data ;)')
 
 
     @cog_ext.cog_slash(name='pingVC', description='Pings the role of the voice channel you are in')
@@ -86,10 +89,13 @@ class Fun(commands.Cog):
         await ctx.send(vc_role.mention)
     
     @cog_ext.cog_slash(name='setStatus', description='Sets the status of the bot')
-    async def setStatus(self, context: SlashContext, new_status: str) -> None:
+    async def setStatus(self, ctx: SlashContext, new_status: str) -> None:
         possible_statuses = ['dnd', 'online', 'idle']
         if new_status in possible_statuses:
             await self.bot.change_presence(status=new_status)
+        completed_message = await ctx.send('Done')
+        await asyncio.sleep(2)
+        await completed_message.delete()
 
 def setup(bot: TaskTrackerBot):
     bot.add_cog(Fun(bot))
