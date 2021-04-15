@@ -4,6 +4,8 @@ import discord
 from bot import TaskTrackerBot
 from db_manager import copypasta_db
 from discord.ext import commands
+from discord_slash import cog_ext
+from discord_slash.context import SlashContext
 from models.copypasta import CopypastaIn
 
 
@@ -12,7 +14,7 @@ class CopyPastas(commands.Cog):
     def __init__(self, bot: TaskTrackerBot) -> None:
         self.bot = bot
     
-    async def get_copypasta_from_user(self, ctx: commands.Context) -> Union[CopypastaIn, None]:
+    async def get_copypasta_from_user(self, ctx: SlashContext) -> Union[CopypastaIn, None]:
         def check(message: discord.Message) -> bool:
             if ctx.author != message.author:
                 return False
@@ -32,24 +34,24 @@ class CopyPastas(commands.Cog):
             guild_id=str(ctx.guild.id)
         )
     
-    @commands.command(name='addCopypasta')
-    async def add_copypasta(self, ctx: commands.Context) -> None:
+    @cog_ext.cog_slash(name='addCopypasta', description='Counts all the messages in a certain channel')
+    async def add_copypasta(self, ctx: SlashContext) -> None:
         copypasta_input = await self.get_copypasta_from_user(ctx)
         if not copypasta_input:
             return
         await copypasta_db.insert_one_copypasta(copypasta_input)
         await ctx.send('Done!')
     
-    @commands.command()
-    async def copypasta(self, ctx: commands.Context, *, copypasta_name: str) -> None:
+    @cog_ext.cog_slash(name='copypasta', description='Accesses and pastes a copypasta based on its name')
+    async def copypasta(self, ctx: SlashContext, *, copypasta_name: str) -> None:
         copypasta_output = await copypasta_db.get_copypasta_by_name_and_guild(copypasta_name, ctx.guild)
         if copypasta_output:
             await ctx.send(f'From {ctx.author.mention}:\n{copypasta_output.content}')
         else:
             await ctx.send('Copypasta not found!')
     
-    @commands.command()
-    async def copypastas(self, ctx: commands.Context) -> None:
+    @cog_ext.cog_slash(name='copypastas', description='Sends a list of all the copypastas available in this server')
+    async def copypastas(self, ctx: SlashContext) -> None:
         copypasta_outputs = await copypasta_db.get_copypastas_by_guild(ctx.guild)
         copypastas_embed = discord.Embed(
             type='rich',

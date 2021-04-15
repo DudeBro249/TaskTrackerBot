@@ -1,3 +1,4 @@
+from discord_slash.client import SlashCommand
 from bot import TaskTrackerBot
 from constants.environment import DISCORD_TOKEN
 from db_manager.db import create_all_tables
@@ -5,6 +6,8 @@ from db_manager.db import create_all_tables
 
 def main():
     bot = TaskTrackerBot.new()
+    SlashCommand(bot, sync_commands=True)
+
     extension_names = [
         'exts.channels',
         'exts.copypastas',
